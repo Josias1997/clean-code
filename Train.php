@@ -10,7 +10,7 @@ class Train {
     const CONTAINER_SYMBOL = "C";
 
     const HEAD_CONTENT = "HHHH";
-    const PASSENGER_CONTENT = "0000";
+    const PASSENGER_CONTENT = "OOOO";
     const RESTAURANT_CONTENT = "hThT";
     const EMPTY_CONTAINER = "____";
     const FILLED_CONTAINER = "^^^^";
@@ -32,9 +32,7 @@ class Train {
     public function initializeTrainConfiguration()
     {
         return $this->trainConfiguration = self::TRAIN_START
-            .self::HEAD_CONTENT
-            .self::COLON_SEPARATOR
-            .self::VERTICAL_LINE_SEPARATOR;
+            .self::HEAD_CONTENT;
     }
 
     public function configureTrain()
@@ -73,19 +71,14 @@ class Train {
 
     public function addSeparatorsIfIndexDifferentFromLastParameterIndex($index)
     {
-        if (function_exists("array_key_last"))
-        {
-            if($index !== \array_key_last($this->trainConfigurationParameters))
-                $this->trainConfiguration .= $this->trainConfiguration
-                    .self::COLON_SEPARATOR
-                    .self::VERTICAL_LINE_SEPARATOR;
-        }
+        if($index !== $this->getLastItemIndex())
+            $this->trainConfiguration .= self::COLON_SEPARATOR.self::VERTICAL_LINE_SEPARATOR;
     }
 
     public function addVerticalLineSeparatorIfParameterDifferentFromHeadContent($parameter)
     {
         if ($parameter !== self::HEAD_SYMBOL)
-        $this->trainConfiguration .= $this->trainConfiguration.self::VERTICAL_LINE_SEPARATOR;
+        $this->trainConfiguration .= self::VERTICAL_LINE_SEPARATOR;
     }
 
     public function print()
@@ -99,11 +92,18 @@ class Train {
         {
             return false;
         }
-        $this->trainConfiguration .= \preg_replace('/.'.self::EMPTY_CONTAINER.'/', self::FILLED_CONTAINER, $this->trainConfiguration, 1);
+        $this->trainConfiguration = \preg_replace('/'.self::EMPTY_CONTAINER.'/', self::FILLED_CONTAINER, $this->trainConfiguration, 1);
     }
 
     public function hasEmptyContainer()
     {
-        return \in_array(self::EMPTY_CONTAINER, str_split($this->trainConfiguration));
+        return \preg_match('/' . self::EMPTY_CONTAINER . '/', $this->trainConfiguration);
+    }
+
+    public function getLastItemIndex()
+    {
+        \end($this->trainConfigurationParameters);
+
+        return key($this->trainConfigurationParameters);
     }
 }
